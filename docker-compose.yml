@@ -1,0 +1,23 @@
+version: '3.4'
+services:
+  # Start
+  # Database
+  postgres:
+      image: postgres
+      container_name: postgres
+      environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=Password1
+        - POSTGRES_DB=MusicPlayer
+      ports:
+        - "5432:5432"
+  backend:
+      image: aliakseizhurauliou/musion-backend:latest
+      container_name: backend
+      environment:
+        - DB_HOST=postgres
+        - DB_PORT=5432
+        - DB_USER=postgres
+        - DB_PASSWORD=Password1
+      ports:
+        - "3000:3000"
