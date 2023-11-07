@@ -1,0 +1,34 @@
+<meta-runner name="Trigger VIA API">
+  <description>Trigger builds via rest API</description>
+  <settings>
+    <parameters>
+      <param name="BUILD_ID" value="" spec="text display='normal' label='Build ID' validationMode='not_empty'" />
+      <param name="BUILD_NAME" value="" spec="text display='normal' label='Build Name' validationMode='not_empty'" />
+      <param name="PARAM" value="" spec="text display='normal' validationMode='not_empty'" />
+      <param name="RUN_APP" value="false" spec="checkbox uncheckedValue='false' display='normal' checkedValue='true' description='Is run app after deploy' label='Run app'" />
+      <param name="RUN_DEPLOY" value="false" spec="checkbox uncheckedValue='false' display='normal' checkedValue='true' description='Is trigger deploy after job' label='Deploy'" />
+      <param name="TAG_NAME" value="latest" spec="text display='normal' description='Tag for docker image' label='Tag' validationMode='not_empty'" />
+      <param name="TOKEN" value="zxxaeec8f6f6d499cc0f0456adfd76876518ee0fe93708d5e760119f6a8d47988615e98418e364395078ac08e0a580c5c6c229739bb11d305fb85b4aee56ae3dcfac1302420d941091941ad5e6b23931a1900acd467f74f0086e7444cdc7caf449fa38ed1e9695708146da8ef88fd1b2564" spec="password display='hidden'" />
+    </parameters>
+    <build-runners>
+      <runner name="Trigger Build" type="simpleRunner">
+        <parameters>
+          <param name="script.content"><![CDATA[trigger_value="%PARAM%"
+
+# Проверить, установлено ли значение trigger в "true"
+if [ "$trigger_value" = "true" ]; then
+    echo "Trigger is set to true. Starting %BUILD_NAME%."
+
+	curl -H "Authorization: Bearer %TOKEN%" -X POST "http://8.217.195.189:8111/app/rest/buildQueue" --data "<build><buildType id='%BUILD_ID%'/></build>" -H "Content-Type: application/xml"
+
+else
+    echo "Trigger is not set to true. Skipping %BUILD_NAME%."
+fi]]></param>
+          <param name="teamcity.step.mode" value="default" />
+          <param name="use.custom.script" value="true" />
+        </parameters>
+      </runner>
+    </build-runners>
+    <requirements />
+  </settings>
+</meta-runner>
